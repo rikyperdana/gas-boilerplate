@@ -1,0 +1,45 @@
+<script> window.addEventListener('load', function() {
+
+var state = null;
+
+function fieldsMaker(fields){return _.map(fields,
+  function(field){ return m('.field',
+    m('label.label', _.startCase(field)),
+    m('.control', m('input.input',
+      {type: 'text', name: field}
+    ))
+  )}
+)};
+
+var fieldNames = ['no_mr', 'nama', 'umur', 'keluhan'];
+
+m.mount(document.body, {view: function(){return m('.content',
+  m('form',
+    {onsubmit: function(e){
+      e.preventDefault();
+      var doc = _.fromPairs(_.map(
+        _.initial(e.target), function(el){
+          return [el.name, el.value];
+        }
+      ));
+      google.script.run
+      .withSuccessHandler(console.log)
+      .insert('Pasien', doc)
+      m.redraw();
+    }},
+    fieldsMaker(fieldNames),
+    m('.field', m('.control', m('input.button.is-success',
+      {type: 'submit', value: 'Submit'}
+    )))
+  ),
+  m('p', state),
+  m('.button.is-info', {
+    onclick: function(){
+      google.script.run
+      .withSuccessHandler(function(res){console.log(res)})
+      .insert('Pasien', {name: 'Riky', gender: 1})
+    }
+  }, 'Testing')
+)}});
+
+});</script>
